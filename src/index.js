@@ -18,7 +18,7 @@ app.use(express.json());
 
 // API
 // USER API 
-app.use('/api/v1', userRouter);
+app.use('/api/v1/users', userRouter);
 
 
 
