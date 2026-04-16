@@ -1,18 +1,9 @@
 
 
-
-
-
-
-
-
-
-
-
-
 import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
+import { userRouter } from './app/users/user.route.js';
 const app = express();
 
 
@@ -26,16 +17,39 @@ app.use(express.json());
 
 
 // API
+// USER API 
+app.use('/api/v1', userRouter);
+
+
+
 app.get('/', (req,res)=>{
 
     return res.status(200).json({
         success:true,
-        message:"hello word from course management",
+        message:"Hello World",
     })
 
 })
 
 
+
+
+
+
+app.use((req,res)=>{
+
+    return res.status(404).json({
+        message:`This ${req.url} path   not found`
+    })
+})
+
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    success: false,
+    message: err.message || "Something went wrong",
+  });
+});
 
 // EXPORT SPP 
 
