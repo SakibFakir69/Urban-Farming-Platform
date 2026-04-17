@@ -2,7 +2,7 @@
 import jwt from 'jsonwebtoken';
 
 
-const verifyToken = async (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
 
     const token = req.header('Authorization')?.split(' ')[1];
 
@@ -27,27 +27,27 @@ const verifyToken = async (req, res, next) => {
 }
 
 
-const verifyRole = (role) => {
+export const verifyRole = (...roles) => {
 
     return (req, res, next) => {
-        
+
         if (!req.user) {
             return res.status(401).json({
                 success: false,
                 message: "Unauthorized"
             });
         }
+       
+        if (!roles.includes(req.user.role)) {
 
-        if (req.user?.role !== role) {
             return res.status(403).json({
                 success: false,
                 message: "Access denied"
             });
         }
+        
         next();
 
     }
-
-
 
 }

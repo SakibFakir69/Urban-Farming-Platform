@@ -11,7 +11,6 @@ const createUser = async (req, res) => {
         const userData = req.body;
         console.log("create user hit");
 
-
         const isUserExit = await prisma.user.findFirst({
             where: {
                 email: userData?.email

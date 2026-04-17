@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import { userRouter } from './app/users/user.route.js';
+import { vendorRouter } from './app/vendor/vendor.route.js';
 const app = express();
 
 
@@ -19,6 +20,7 @@ app.use(express.json());
 // API
 // USER API 
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/vendors',vendorRouter);
 
 
 
