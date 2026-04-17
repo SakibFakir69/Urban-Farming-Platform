@@ -5,6 +5,7 @@ dotenv.config();
 import express from 'express';
 import { userRouter } from './app/users/user.route.js';
 import { vendorRouter } from './app/vendor/vendor.route.js';
+import { communityRouter } from './app/community/community.route.js';
 const app = express();
 
 
@@ -21,6 +22,7 @@ app.use(express.json());
 // USER API 
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/vendors',vendorRouter);
+app.use('/api/v1/communitys',communityRouter)
 
 
 

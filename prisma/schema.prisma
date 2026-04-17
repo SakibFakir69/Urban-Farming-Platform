@@ -5,8 +5,6 @@
 
 generator client {
   provider = "prisma-client-js"
-
- 
 }
 
 datasource db {
@@ -14,20 +12,51 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
 enum Role {
   CUSTOMER
   VENDOR
   ADMIN
 }
 
+enum CertStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
-  email     String  @unique
+  email     String   @unique
   password  String
   role      Role     @default(CUSTOMER)
   status    Boolean  @default(true)
   createdAt DateTime @default(now())
+  post CommunityPost[]
+}
+
+model VendorProfile {
+  id                  Int                 @id @default(autoincrement())
+  userId              Int                 @unique
+  farmName            String              @unique
+  certificationStatus Boolean             @default(false)
+  farmLocation        String
+  sustainabilityCert  SustainabilityCert?
+}
+
+model SustainabilityCert {
+  id                Int           @id @default(autoincrement())
+  vendorId          Int           @unique
+  certifyingAgency  String
+  certificationDate DateTime
+  status            CertStatus    @default(PENDING)
+  vendor            VendorProfile @relation(fields: [vendorId], references: [userId])
+}
+
+model CommunityPost {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  postContent String
+  postDate    DateTime @default(now())
+  user User @relation(fields: [userId] , references: [id])
 }

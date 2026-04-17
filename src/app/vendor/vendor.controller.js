@@ -1,3 +1,4 @@
+import { send } from "node:process";
 import prisma from "../../../lib/prisma.js";
 import { sendResponse } from "../../utils/return-response.js";
 
@@ -112,7 +113,6 @@ const getMyVendor = async (req, res, next) => {
         userId: userId
       }
     });
-
     if (!vendor) {
       return res.status(404).json({
         success: false,
@@ -132,9 +132,60 @@ const getMyVendor = async (req, res, next) => {
   }
 };
 
+
+const applyCertificate = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+  
+    const vendor = await prisma.vendorProfile.findUnique({
+      where: { userId }
+    });
+
+    if (!vendor) {
+      return sendResponse(res, 404, false, "Vendor profile not found");
+    }
+
+    
+    const existingCert = await prisma.sustainabilityCert.findUnique({
+      where: { vendorId: userId }
+    });
+
+    if (existingCert) {
+      return sendResponse(
+        res,
+        400,
+        false,
+        "You have already applied for certificate"
+      );
+    }
+
+    
+    const apply = await prisma.sustainabilityCert.create({
+      data: {
+        vendorId: userId,
+        certifyingAgency: req.body.certifyingAgency,
+        status: "PENDING"
+      }
+    });
+
+    return sendResponse(
+      res,
+      201,
+      true,
+      "Certificate application submitted",
+      apply
+    );
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const vendorController = {
   createVendor,
   updateVendor,
   deleteVendor,
-  getMyVendor
+  getMyVendor,
+  applyCertificate
 };

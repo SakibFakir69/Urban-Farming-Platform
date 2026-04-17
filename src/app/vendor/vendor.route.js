@@ -29,4 +29,5 @@ router.delete(
   vendorController.deleteVendor
 );
 router.get('/vendor', verifyToken, verifyRole("VENDOR", vendorController.getMyVendor))
+router.post('/apply', verifyToken , verifyRole("VENDOR"), vendorController.applyCertificate);
 export const vendorRouter = router;
