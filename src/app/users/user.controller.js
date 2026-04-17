@@ -62,7 +62,7 @@ const loginUser = async (req, res) => {
         const accessToken = generateToken(
             {
                 email: user.email,
-                id: user._id,
+                id: user.id,
                 role: user.role
             },
             "1d"

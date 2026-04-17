@@ -11,22 +11,22 @@ const router = Router();
 router.post(
   "/vendor",
   verifyToken,
-  verifyRole("vendor"),
+  verifyRole("VENDOR"),
   vendorController.createVendor
 );
 
 router.patch(
   "/vendor",
   verifyToken,
-  verifyRole("vendor"),
+  verifyRole("VENDOR"),
   vendorController.updateVendor
 );
 
 router.delete(
   "/vendor",
   verifyToken,
-  verifyRole("vendor"),
+  verifyRole("VENDOR"),
   vendorController.deleteVendor
 );
-
+router.get('/vendor', verifyToken, verifyRole("VENDOR", vendorController.getMyVendor))
 export const vendorRouter = router;

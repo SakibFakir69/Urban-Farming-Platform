@@ -3,11 +3,14 @@ import { sendResponse } from "../../utils/return-response.js";
 
 const createVendor = async (req, res, next) => {
   try {
-    if (req.user.role !== "vendor") {
+    if (req.user.role !== "VENDOR") {
       return sendResponse(res, 403, false, "Access denied");
     }
 
-    const userId = req.user.id;
+
+    const userId = req.user?.id;
+    console.log(userId , ' userid');
+    console.log(req.body , ' body ');
 
     const existing = await prisma.vendorProfile.findUnique({
       where: { userId }
@@ -99,8 +102,39 @@ const deleteVendor = async (req, res, next) => {
   }
 };
 
+
+const getMyVendor = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    const vendor = await prisma.vendorProfile.findUnique({
+      where: {
+        userId: userId
+      }
+    });
+
+    if (!vendor) {
+      return res.status(404).json({
+        success: false,
+        message: "Vendor profile not found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Vendor profile fetched successfully",
+      data: vendor
+    });
+
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
 export const vendorController = {
   createVendor,
   updateVendor,
-  deleteVendor
+  deleteVendor,
+  getMyVendor
 };
