@@ -3,6 +3,8 @@
 
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
+// READ MODEL
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -33,6 +35,7 @@ model User {
   status    Boolean         @default(true)
   createdAt DateTime        @default(now())
   post      CommunityPost[]
+  orders Order[]
 }
 
 model VendorProfile {
@@ -43,7 +46,8 @@ model VendorProfile {
   farmLocation        String
   sustainabilityCert  SustainabilityCert?
   rentalSpaces        RentalSpace[]
-  produces            Produce[] 
+  produces            Produce[]
+  orders              Order[]
   // 1 to many
 }
 
@@ -75,15 +79,30 @@ model RentalSpace {
   vendor VendorProfile @relation(fields: [vendorId], references: [id])
 }
 
+
+
 model Produce {
-  id                  Int     @id @default(autoincrement())
+  id                  Int           @id @default(autoincrement())
   vendorId            Int
   name                String
   description         String
   price               Int
   category            String
-  certificationStatus Boolean @default(false)
+  certificationStatus Boolean       @default(false)
   availableQuantity   Int
+  vendor              VendorProfile @relation(fields: [vendorId], references: [id])
+  orders Order[]
+}
 
-  vendor VendorProfile @relation(fields: [vendorId], references: [id])
+// how gave order
+model Order {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  produceId Int
+  vendorId  Int
+  status    String   @default("PENDING")
+  orderDate DateTime @default(now())
+  user     User           @relation(fields: [userId], references: [id])
+  produce  Produce        @relation(fields: [produceId], references: [id])
+  vendor   VendorProfile  @relation(fields: [vendorId], references: [id])
 }
