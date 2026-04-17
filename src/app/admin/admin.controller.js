@@ -95,6 +95,9 @@ const rejectCertificateApply = async (req, res, next) => {
   }
 };
 
+// all rental 
+// rental , delete
+
 export const adminController = {
   getAllUsers,
   getAllVendor,
