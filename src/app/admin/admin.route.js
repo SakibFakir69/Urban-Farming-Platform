@@ -29,7 +29,6 @@ router.patch(
 
 router.get('/orders' ,verifyToken, verifyRole("ADMIN"), adminController.getOrders)
 
-
 export const adminRouter= router;
 
 
