@@ -3,8 +3,6 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 // READ MODEL
 
-
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,7 +11,6 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 
 enum Role {
   CUSTOMER
@@ -28,30 +25,31 @@ enum CertStatus {
 }
 
 model User {
-  id        Int             @id @default(autoincrement())
-  name      String
-  email     String          @unique
-  password  String
-  role      Role            @default(CUSTOMER)
-  status    Boolean         @default(true)
-  createdAt DateTime        @default(now())
-  post      CommunityPost[]
-  orders Order[]
+  id            Int             @id @default(autoincrement())
+  name          String
+  email         String          @unique
+  password      String
+  role          Role            @default(CUSTOMER)
+  status        Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  post          CommunityPost[]
+  orders        Order[]
+  vendorProfile VendorProfile?
 }
 
 model VendorProfile {
-  id                  Int                 @id @default(autoincrement())
-  userId              Int                 @unique
-  farmName            String              @unique
-  certificationStatus Boolean             @default(false)
+  id                  Int     @id @default(autoincrement())
+  userId              Int     @unique
+  farmName            String  @unique
+  certificationStatus Boolean @default(false)
   farmLocation        String
-  sustainabilityCert  SustainabilityCert?
-  rentalSpaces        RentalSpace[]
-  produces            Produce[]
-  orders              Order[]
-  // 1 to many
-}
 
+  sustainabilityCert SustainabilityCert?
+  user               User                @relation(fields: [userId], references: [id])
+  rentalSpaces       RentalSpace[]
+  produces           Produce[]
+  orders             Order[]
+}
 
 model SustainabilityCert {
   id                Int           @id @default(autoincrement())
@@ -70,19 +68,15 @@ model CommunityPost {
   user        User     @relation(fields: [userId], references: [id])
 }
 
-
-
-
 model RentalSpace {
-  id           Int     @id @default(autoincrement())
+  id           Int           @id @default(autoincrement())
   vendorId     Int
   location     String
   size         String
   price        Int
-  availability Boolean @default(true)
-  vendor VendorProfile @relation(fields: [vendorId], references: [id])
+  availability Boolean       @default(true)
+  vendor       VendorProfile @relation(fields: [vendorId], references: [id])
 }
-
 
 model Produce {
   id                  Int           @id @default(autoincrement())
@@ -94,27 +88,18 @@ model Produce {
   certificationStatus Boolean       @default(false)
   availableQuantity   Int
   vendor              VendorProfile @relation(fields: [vendorId], references: [id])
-  orders Order[]
+  orders              Order[]
 }
-
 
 // how gave order
 model Order {
-  id        Int      @id @default(autoincrement())
+  id        Int           @id @default(autoincrement())
   userId    Int
   produceId Int
   vendorId  Int
-  status    String   @default("PENDING")
-  orderDate DateTime @default(now())
-  user     User           @relation(fields: [userId], references: [id])
-  produce  Produce        @relation(fields: [produceId], references: [id])
-  vendor   VendorProfile  @relation(fields: [vendorId], references: [id])
+  status    String        @default("PENDING")
+  orderDate DateTime      @default(now())
+  user      User          @relation(fields: [userId], references: [id])
+  produce   Produce       @relation(fields: [produceId], references: [id])
+  vendor    VendorProfile @relation(fields: [vendorId], references: [id])
 }
-
-
-
-
-
-
-
-

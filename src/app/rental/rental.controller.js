@@ -1,5 +1,5 @@
-import prisma from "../../../lib/prisma";
-import { sendResponse } from "../../utils/return-response";
+import prisma from "../../../lib/prisma.js";
+import { sendResponse } from "../../utils/return-response.js";
 
 
 
@@ -13,7 +13,7 @@ const createRentalPlot = async (req, res, next) => {
       return sendResponse(res, 400, false, "All fields are required");
     }
 
-    // 🔥 find vendor profile
+   
     const vendor = await prisma.vendorProfile.findUnique({
       where: { userId }
     });

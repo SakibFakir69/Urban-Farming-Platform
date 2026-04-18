@@ -6,6 +6,10 @@ import express from 'express';
 import { userRouter } from './app/users/user.route.js';
 import { vendorRouter } from './app/vendor/vendor.route.js';
 import { communityRouter } from './app/community/community.route.js';
+import { produceRouter } from './app/Produce/produce.route.js';
+import { rentalRouter } from './app/rental/rental.route.js';
+import { orderRouter } from './app/order/order.route.js';
+import { adminRouter } from './app/admin/admin.route.js';
 const app = express();
 
 
@@ -23,7 +27,9 @@ app.use(express.json());
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/vendors',vendorRouter);
 app.use('/api/v1/communitys',communityRouter)
-
+app.use('/api/v1/products', produceRouter);
+app.use('/api/v1/rentals', rentalRouter);
+app.use('/api/v1/admin',adminRouter)
 
 
 app.get('/', (req,res)=>{

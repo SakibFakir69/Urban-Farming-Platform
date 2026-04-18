@@ -16,6 +16,7 @@ const createVendor = async (req, res, next) => {
     const existing = await prisma.vendorProfile.findUnique({
       where: { userId }
     });
+    console.log(existing , 'exe')
 
     if (existing) {
       return sendResponse(res, 400, false, "Vendor already exists");
@@ -27,6 +28,8 @@ const createVendor = async (req, res, next) => {
         userId
       }
     });
+    console.log(vendor , ' vendor');
+
 
     return sendResponse(
       res,
@@ -42,7 +45,7 @@ const createVendor = async (req, res, next) => {
 
 const updateVendor = async (req, res, next) => {
   try {
-    if (req.user.role !== "vendor") {
+    if (req.user.role !== "VENDOR") {
       return sendResponse(res, 403, false, "Access denied");
     }
 
@@ -66,7 +69,7 @@ const updateVendor = async (req, res, next) => {
 
     return sendResponse(
       res,
-      200,
+      201,
       true,
       "Vendor updated successfully",
       updated
@@ -79,7 +82,7 @@ const updateVendor = async (req, res, next) => {
 
 const deleteVendor = async (req, res, next) => {
   try {
-    if (req.user.role !== "vendor") {
+    if (req.user.role !== "VENDOR") {
       return sendResponse(res, 403, false, "Access denied");
     }
 
@@ -137,18 +140,20 @@ const applyCertificate = async (req, res, next) => {
   try {
     const userId = req.user.id;
 
-  
+    const { certifyingAgency } = req.body;
+
+
     const vendor = await prisma.vendorProfile.findUnique({
-      where: { userId }
+      where: { userId },
     });
 
     if (!vendor) {
       return sendResponse(res, 404, false, "Vendor profile not found");
     }
 
-    
+  
     const existingCert = await prisma.sustainabilityCert.findUnique({
-      where: { vendorId: userId }
+      where: { vendorId: userId },
     });
 
     if (existingCert) {
@@ -161,22 +166,22 @@ const applyCertificate = async (req, res, next) => {
     }
 
     
-    const apply = await prisma.sustainabilityCert.create({
+    const certificate = await prisma.sustainabilityCert.create({
       data: {
         vendorId: userId,
-        certifyingAgency: req.body.certifyingAgency,
-        status: "PENDING"
-      }
+        certifyingAgency,
+        certificationDate: new Date(), 
+        status: "PENDING",
+      },
     });
 
     return sendResponse(
       res,
       201,
       true,
-      "Certificate application submitted",
-      apply
+      "Certificate application submitted successfully",
+      certificate
     );
-
   } catch (error) {
     next(error);
   }

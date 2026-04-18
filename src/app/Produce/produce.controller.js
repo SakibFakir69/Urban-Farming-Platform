@@ -53,16 +53,17 @@ export const getProducts = async (req, res) => {
     const skip = (page - 1) * limit;
 
   
-    const products = await prisma.product.findMany({
+    const products = await prisma.produce.findMany({
       skip,
       take: limit,
       orderBy: {
-        createdAt: "desc",
+        id: "desc",
       },
     });
+   
 
    
-    const total = await prisma.product.count();
+    const total = await prisma.produce.count();
 
     res.json({
       success: true,
@@ -184,7 +185,7 @@ const deleteProduce = async (req, res, next) => {
 
 export const produceController = {
   createProduce,
-  getAllProduce,
+ getProducts,
   getSingleProduce,
   updateProduce,
   deleteProduce

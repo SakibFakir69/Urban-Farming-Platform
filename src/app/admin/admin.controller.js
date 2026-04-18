@@ -1,9 +1,8 @@
-import prisma from "../../../lib/prisma";
-import { sendResponse } from "../../utils/return-response";
+import prisma from "../../../lib/prisma.js";
+import { sendResponse } from "../../utils/return-response.js";
+import { getOrders } from "../order/order.controller.js";
 
-/* =========================
-   GET ALL USERS
-========================= */
+
 const getAllUsers = async (req, res, next) => {
   try {
     const users = await prisma.user.findMany({
@@ -16,9 +15,8 @@ const getAllUsers = async (req, res, next) => {
   }
 };
 
-/* =========================
-   GET ALL VENDORS
-========================= */
+
+
 const getAllVendor = async (req, res, next) => {
   try {
     const vendors = await prisma.vendorProfile.findMany({
@@ -34,9 +32,7 @@ const getAllVendor = async (req, res, next) => {
   }
 };
 
-/* =========================
-   GET ALL CERTIFICATE REQUESTS
-========================= */
+
 const getAllCertificateApply = async (req, res, next) => {
   try {
     const certs = await prisma.sustainabilityCert.findMany({
@@ -54,9 +50,7 @@ const getAllCertificateApply = async (req, res, next) => {
   }
 };
 
-/* =========================
-   APPROVE CERTIFICATE
-========================= */
+
 const approveCertificateApply = async (req, res, next) => {
   try {
     const vendorId = Number(req.params.vendorId);
@@ -77,9 +71,7 @@ const approveCertificateApply = async (req, res, next) => {
   }
 };
 
-/* =========================
-   REJECT CERTIFICATE
-========================= */
+
 const rejectCertificateApply = async (req, res, next) => {
   try {
     const vendorId = Number(req.params.vendorId);
@@ -95,11 +87,55 @@ const rejectCertificateApply = async (req, res, next) => {
   }
 };
 
-// all rental 
-// rental , delete
+
+const allOrders = async (req, res, next) => {
+  try {
+    const userRole = req.user.role;
+
+  
+    if (userRole !== "ADMIN") {
+      return sendResponse(res, 403, false, "Access denied");
+    }
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const skip = (page - 1) * limit;
+
+    const orders = await prisma.order.findMany({
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: "desc"
+      },
+      include: {
+        user: true,
+        product: true
+      }
+    });
+
+    const total = await prisma.order.count();
+
+    return sendResponse(res, 200, true, "All orders fetched successfully", {
+      orders,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export const adminController = {
   getAllUsers,
+  getOrders,
+
   getAllVendor,
   getAllCertificateApply,
   approveCertificateApply,

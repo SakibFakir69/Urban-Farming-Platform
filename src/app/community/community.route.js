@@ -9,6 +9,7 @@ const router = Router();
 
 router.post("/posts", verifyToken, communityController.createPost);
 router.get("/posts", communityController.getAllPosts);
+
 router.get("/posts/:id", communityController.getSinglePost);
 router.patch("/posts/:id", verifyToken, communityController.updatePost);
 router.delete("/posts/:id", verifyToken, communityController.deletePost);
