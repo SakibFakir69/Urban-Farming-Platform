@@ -40,39 +40,47 @@ const createProduce = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+};  
 
 
 
-const getAllProduce = async (req, res, next) => {
+
+export const getProducts = async (req, res) => {
   try {
-    const { category, search } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
 
-    const products = await prisma.produce.findMany({
-      where: {
-        ...(category && { category }),
-        ...(search && {
-          name: {
-            contains: search,
-            mode: "insensitive"
-          }
-        })
-      },
-      include: {
-        vendor: true
-      },
+    const skip = (page - 1) * limit;
+
+  
+    const products = await prisma.product.findMany({
+      skip,
+      take: limit,
       orderBy: {
-        id: "desc"
-      }
+        createdAt: "desc",
+      },
     });
 
-    return sendResponse(res, 200, true, "Products fetched", products);
+   
+    const total = await prisma.product.count();
 
+    res.json({
+      success: true,
+      data: products,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
-    next(error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch products",
+    });
   }
 };
-
 
 
 const getSingleProduce = async (req, res, next) => {
