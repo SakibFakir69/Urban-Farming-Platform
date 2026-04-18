@@ -5,8 +5,9 @@ import express from "express";
 import verifyToken from "../../middleware/verifyToken.js";
 import { verifyRole } from "../../middleware.js";
 import { rentalController } from "./rental.controller.js";
-
 const router = express.Router();
+
+
 
 router.post(
   "/rentals",
@@ -25,16 +26,12 @@ router.patch(
   rentalController.updateRentalPlot
 );
 
-
-
 router.delete(
   "/rentals/:id",
   verifyToken,
   verifyRole("VENDOR"),
   rentalController.deleteRentalPlot
 );
-
-
 
 
 

@@ -1,9 +1,9 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 // Get a free hosted Postgres database in seconds: `npx create-db`
-
 // READ MODEL
+
+
 
 generator client {
   provider = "prisma-client-js"
@@ -13,6 +13,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 
 enum Role {
   CUSTOMER
@@ -51,6 +52,7 @@ model VendorProfile {
   // 1 to many
 }
 
+
 model SustainabilityCert {
   id                Int           @id @default(autoincrement())
   vendorId          Int           @unique
@@ -68,6 +70,9 @@ model CommunityPost {
   user        User     @relation(fields: [userId], references: [id])
 }
 
+
+
+
 model RentalSpace {
   id           Int     @id @default(autoincrement())
   vendorId     Int
@@ -75,10 +80,8 @@ model RentalSpace {
   size         String
   price        Int
   availability Boolean @default(true)
-
   vendor VendorProfile @relation(fields: [vendorId], references: [id])
 }
-
 
 
 model Produce {
@@ -94,6 +97,7 @@ model Produce {
   orders Order[]
 }
 
+
 // how gave order
 model Order {
   id        Int      @id @default(autoincrement())
@@ -106,3 +110,11 @@ model Order {
   produce  Produce        @relation(fields: [produceId], references: [id])
   vendor   VendorProfile  @relation(fields: [vendorId], references: [id])
 }
+
+
+
+
+
+
+
+
